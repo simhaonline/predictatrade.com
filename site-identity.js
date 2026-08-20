@@ -21,6 +21,7 @@
     if (capabilities && siteFooter && siteFooter.parentNode !== capabilities.parentNode) {
       siteFooter.parentNode.insertBefore(capabilities, siteFooter);
     }
+    if (capabilities && siteFooter) capabilities.classList.add('is-ready');
     const footerBrand = document.querySelector('.footer-brand');
     if (footerBrand && !footerBrand.dataset.rebranded) {
       footerBrand.dataset.rebranded = 'true';
