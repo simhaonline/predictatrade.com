@@ -50,6 +50,10 @@
 .la-annotation-line { stroke: var(--la-amber); stroke-width: 1; }
 .la-annotation-box { fill: #171b21; stroke: var(--la-amber); stroke-width: 1; }
 .la-annotation-text { fill: var(--la-gold); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.la-live-reference { opacity: 0; transition: opacity 500ms ease-out; }
+.la-live-line { stroke: var(--la-amber); stroke-dasharray: 2 7; stroke-width: 1; opacity: .5; }
+.la-live-box { fill: #171b21; stroke: var(--la-amber); stroke-width: 1; }
+.la-live-text { fill: var(--la-gold); font-size: 10px; font-weight: 800; letter-spacing: .04em; }
 .living-analysis.is-shape .la-noise { opacity: .05; transition: opacity 900ms ease-out; }
 .living-analysis.is-shape .la-competitor { opacity: 0; transition: opacity 700ms ease-out; }
 .living-analysis.is-shape .la-signal { animation: la-draw 3s ease-out both; opacity: .8; }

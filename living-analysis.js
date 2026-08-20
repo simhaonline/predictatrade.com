@@ -61,6 +61,7 @@
       <g class="la-noise"><rect width="800" height="450"/></g>
       <path class="la-signal-glow" d="${signalPath}" stroke-dasharray="${chartWidth}"/>
       <path class="la-signal" d="${signalPath}" stroke-dasharray="${chartWidth}" stroke-dashoffset="${chartWidth}"/>
+      <g class="la-live-reference" aria-hidden="true"><line class="la-live-line" x1="54" x2="746" y1="170" y2="170"/><rect class="la-live-box" x="626" y="142" width="132" height="25" rx="12"/><text class="la-live-text" x="640" y="159">XAUUSD / —</text></g>
       <g class="la-chips"><rect class="la-chip" x="570" y="78" width="58" height="28" rx="14"/><text class="la-chip-text" x="584" y="96">EMA</text><rect class="la-chip" x="636" y="78" width="58" height="28" rx="14"/><text class="la-chip-text" x="650" y="96">RSI</text><rect class="la-chip" x="702" y="78" width="58" height="28" rx="14"/><text class="la-chip-text" x="713" y="96">MACD</text></g>
       <g class="la-annotation"><line class="la-annotation-line" x1="604" y1="174" x2="674" y2="139"/><rect class="la-annotation-box" x="674" y="118" width="104" height="42" rx="8"/><text class="la-annotation-text" x="688" y="144">MEASURED ↑</text></g>
     </svg>`;
@@ -89,6 +90,24 @@
     note.textContent = 'SLOW THE INTERPRETATION';
     host.append(note);
     host.classList.add('is-mounted');
+    const liveReference = host.querySelector('.la-live-reference');
+    const liveLine = host.querySelector('.la-live-line');
+    const liveBox = host.querySelector('.la-live-box');
+    const liveText = host.querySelector('.la-live-text');
+    const updateLiveReference = (quote) => {
+      if (!liveReference || !quote || !Number.isFinite(quote.price)) return;
+      const low = Number(quote.dayLow) || quote.price - Math.max(1, Math.abs(quote.price) * .005);
+      const high = Number(quote.dayHigh) || quote.price + Math.max(1, Math.abs(quote.price) * .005);
+      const ratio = Math.max(0, Math.min(1, (quote.price - low) / Math.max(.0001, high - low)));
+      const lineY = 350 - ratio * 250;
+      const change = Number(quote.changePercent) || 0;
+      liveLine.setAttribute('y1', String(lineY));
+      liveLine.setAttribute('y2', String(lineY));
+      liveBox.setAttribute('y', String(lineY - 18));
+      liveText.setAttribute('y', String(lineY - 2));
+      liveText.textContent = `XAUUSD / ${Number(quote.price).toFixed(2)} ${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+      liveReference.style.opacity = '1';
+    };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reduced.matches) { host.classList.add('is-static'); caption.textContent = 'SEE THE SIGNAL'; return; }
     let visible = false;
@@ -96,6 +115,10 @@
     let start = 0;
     let frame = 0;
     let lastPhase = '';
+    let quoteTimer = 0;
+    const refreshQuote = () => fetch('/api/xauusd.php', { cache: 'no-store' }).then((response) => response.ok ? response.json() : null).then(updateLiveReference).catch(() => {});
+    const startQuotePolling = () => { if (!quoteTimer) { refreshQuote(); quoteTimer = window.setInterval(refreshQuote, 60000); } };
+    const stopQuotePolling = () => { if (quoteTimer) { window.clearInterval(quoteTimer); quoteTimer = 0; } };
     const phases = [['is-noise', 'READ THE NOISE', 0], ['is-shape', 'FIND THE SHAPE', CONFIG.phases.noise], ['is-signal', 'SEE THE SIGNAL', CONFIG.phases.noise + CONFIG.phases.shape], ['is-settle', 'SETTLE', CONFIG.phases.noise + CONFIG.phases.shape + CONFIG.phases.signal]];
     const tick = (now) => {
       if (!visible || hidden) { frame = 0; return; }
@@ -106,15 +129,16 @@
       if (phase[0] !== lastPhase) { host.classList.remove(...phases.map(item => item[0])); host.classList.add(phase[0]); caption.textContent = phase[1]; lastPhase = phase[0]; }
       frame = requestAnimationFrame(tick);
     };
-    const setVisibility = (entries) => { visible = entries[0].isIntersecting; if (visible && !frame) frame = requestAnimationFrame(tick); };
+    const setVisibility = (entries) => { visible = entries[0].isIntersecting; if (visible) { if (!frame) frame = requestAnimationFrame(tick); if (!hidden) startQuotePolling(); } else stopQuotePolling(); };
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(setVisibility, { threshold: .15 });
       observer.observe(host);
     } else {
       visible = true;
       frame = requestAnimationFrame(tick);
+      startQuotePolling();
     }
-    document.addEventListener('visibilitychange', () => { hidden = document.visibilityState === 'hidden'; if (!hidden && visible && !frame) frame = requestAnimationFrame(tick); });
+    document.addEventListener('visibilitychange', () => { hidden = document.visibilityState === 'hidden'; if (hidden) stopQuotePolling(); else if (visible) { if (!frame) frame = requestAnimationFrame(tick); startQuotePolling(); } });
     const onReducedChange = (event) => { if (event.matches) { host.classList.remove(...phases.map(item => item[0])); host.classList.add('is-static'); caption.textContent = 'SEE THE SIGNAL'; } };
     if (reduced.addEventListener) reduced.addEventListener('change', onReducedChange);
     else reduced.addListener?.(onReducedChange);
