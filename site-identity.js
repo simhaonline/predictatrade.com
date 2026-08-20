@@ -22,6 +22,23 @@
       siteFooter.parentNode.insertBefore(capabilities, siteFooter);
     }
     if (capabilities && siteFooter) capabilities.classList.add('is-ready');
+    const newsletter = document.querySelector('#newsletter-signup');
+    if (newsletter && siteFooter && siteFooter.parentNode !== newsletter.parentNode) {
+      siteFooter.parentNode.insertBefore(newsletter, siteFooter);
+    }
+    if (newsletter && siteFooter) newsletter.classList.add('is-ready');
+    const newsletterForm = document.querySelector('#newsletter-form');
+    if (newsletterForm && !newsletterForm.dataset.bound) {
+      newsletterForm.dataset.bound = 'true';
+      newsletterForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const email = document.querySelector('#newsletter-email').value.trim();
+        const subject = encodeURIComponent('Predict-A-Trade newsletter subscription');
+        const body = encodeURIComponent('Please add ' + email + ' to the Predict-A-Trade newsletter.');
+        document.querySelector('#newsletter-status').textContent = 'Opening your email app to confirm the request…';
+        window.location.href = 'mailto:predictatrade@gmail.com?subject=' + subject + '&body=' + body;
+      });
+    }
     const footerBrand = document.querySelector('.footer-brand');
     if (footerBrand && !footerBrand.dataset.rebranded) {
       footerBrand.dataset.rebranded = 'true';
