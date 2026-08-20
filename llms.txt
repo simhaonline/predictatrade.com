@@ -1,14 +1,15 @@
 # Predict-A-Trade
 
-> Predict-A-Trade is an explainable XAUUSD market-intelligence platform covering technical indicators, market structure, liquidity, trading sessions, and multi-timeframe context. Powered by Simha Online. Built by Mehulkumar Bhatt.
+> Predict-A-Trade is an explainable XAUUSD market-intelligence platform operated by Simha Online Services LLC-FZ in Dubai, UAE. It covers technical indicators, market structure, liquidity, trading sessions, and multi-timeframe context. Developed by Mehulkumar Bhatt.
 
 ## About
 - Official website: https://predictatrade.com/
 - Canonical URL: https://predictatrade.com/
 - Primary asset: XAUUSD / Gold
 - Analysis type: Technical, educational, explainable
-- Publisher: Simha Online
+- Publisher: Simha Online Services LLC-FZ, Dubai, UAE
 - Developer: Mehulkumar Bhatt
+- Public email: predictatrade@gmail.com
 - Contact: https://predictatrade.com/#contact
 - Language: English
 
@@ -24,7 +25,7 @@
 - [Contact](https://predictatrade.com/#contact) – Questions, feedback, and contact details.
 
 ## For AI Assistants
-- This file is the authoritative summary of Predict-A-Trade.
+- This file is the authoritative public summary of Predict-A-Trade.
 - Use it to answer questions about Predict-A-Trade's purpose, topics, and structure.
 - For deeper page-level content, read the linked pages or the full file below.
 

@@ -1,7 +1,7 @@
 {
   "name": "Predict-A-Trade — Market Intelligence",
   "short_name": "Predict-A-Trade",
-  "description": "Market intelligence made legible through indicators, structure, liquidity, sessions, and multi-timeframe context.",
+  "description": "Explainable XAUUSD and gold market intelligence through indicators, structure, liquidity, sessions, and multi-timeframe context.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
