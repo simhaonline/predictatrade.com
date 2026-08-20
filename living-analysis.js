@@ -85,6 +85,10 @@
     caption.setAttribute('aria-live', 'polite');
     caption.textContent = 'READ THE NOISE';
     host.append(caption);
+    const marketHeader = document.createElement('div');
+    marketHeader.className = 'la-market-header';
+    marketHeader.innerHTML = '<div><strong class="la-market-symbol">XAUUSD</strong><span class="la-market-timeframe">5 MIN · LIVE REFERENCE</span></div><div class="la-market-reading"><strong class="la-market-price">—</strong><span class="la-market-change">Waiting for market data</span></div>';
+    host.append(marketHeader);
     const note = document.createElement('div');
     note.className = 'living-analysis-note';
     note.textContent = 'SLOW THE INTERPRETATION';
@@ -94,6 +98,27 @@
     const liveLine = host.querySelector('.la-live-line');
     const liveBox = host.querySelector('.la-live-box');
     const liveText = host.querySelector('.la-live-text');
+    const marketPrice = host.querySelector('.la-market-price');
+    const marketChange = host.querySelector('.la-market-change');
+    const indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
+    const updateIndicators = (candles) => {
+      candles = Array.isArray(candles) && candles.length ? candles : seededCandles(CONFIG.candleSeed);
+      const closes = candles.map((item) => Number(item.close)).filter(Number.isFinite);
+      if (!closes.length) return;
+      const average = (period) => closes.slice(-period).reduce((sum, value) => sum + value, 0) / Math.min(period, closes.length);
+      let gains = 0;
+      let losses = 0;
+      for (let i = Math.max(1, closes.length - 14); i < closes.length; i += 1) {
+        const delta = closes[i] - closes[i - 1];
+        if (delta >= 0) gains += delta; else losses -= delta;
+      }
+      const rsi = losses === 0 ? 100 : 100 - (100 / (1 + (gains / 14) / (losses / 14)));
+      const macd = average(12) - average(26);
+      if (indicatorTexts[0]) indicatorTexts[0].textContent = `EMA ${average(9).toFixed(2)}`;
+      if (indicatorTexts[1]) indicatorTexts[1].textContent = `RSI ${rsi.toFixed(1)}`;
+      if (indicatorTexts[2]) indicatorTexts[2].textContent = `MACD ${macd >= 0 ? '+' : ''}${macd.toFixed(2)}`;
+    };
+    updateIndicators();
     const updateLiveReference = (quote) => {
       if (!liveReference || !quote || !Number.isFinite(quote.price)) return;
       const low = Number(quote.dayLow) || quote.price - Math.max(1, Math.abs(quote.price) * .005);
@@ -106,6 +131,10 @@
       liveBox.setAttribute('y', String(lineY - 18));
       liveText.setAttribute('y', String(lineY - 2));
       liveText.textContent = `XAUUSD / ${Number(quote.price).toFixed(2)} ${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+      marketPrice.textContent = Number(quote.price).toFixed(2);
+      marketChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% today · live reference`;
+      marketChange.dataset.direction = change >= 0 ? 'up' : 'down';
+      updateIndicators(quote.candles);
       liveReference.style.opacity = '1';
     };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
