@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f6f4ef" />
     <meta name="description" content="Predict-A-Trade — market intelligence made legible." />
     <meta name="keywords" content="XAUUSD, gold market intelligence, trading signals, market analysis, multi-timeframe analysis" />
@@ -20,6 +20,11 @@
     <meta name="twitter:description" content="Market intelligence made legible for clearer trading decisions." />
     <meta name="twitter:image" content="https://predictatrade.com/media/pat-hero-signal.webp" />
     <link rel="canonical" href="https://predictatrade.com/" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Predict-A-Trade" />
     <link rel="icon" type="image/webp" href="/media/predict-a-trade_icon-only.webp" />
     <link rel="preload" as="image" href="/media/pat-hero-signal.webp" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,10 +32,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50..100&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>Predict-A-Trade — See the signal before the noise</title>
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"Organization","name":"Predict-A-Trade","alternateName":"Predict-A-Trade by Simha Online","url":"https://predictatrade.com/","logo":"https://predictatrade.com/media/predict-a-trade_horizontal.webp","description":"Market intelligence made legible through indicators, market structure, liquidity context, sessions, and multi-timeframe analysis."}
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Predict-A-Trade",
+        "url": "https://predictatrade.com/",
+        "logo": "https://predictatrade.com/media/predict-a-trade_horizontal.webp",
+        "description": "Explainable XAUUSD market intelligence covering indicators, market structure, liquidity, sessions, and multi-timeframe context.",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "url": "https://predictatrade.com/#contact"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Simha Online"
+        }
+      }
     </script>
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"WebSite","name":"Predict-A-Trade","url":"https://predictatrade.com/","description":"XAUUSD market intelligence and explainable trading analysis."}
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Predict-A-Trade",
+        "url": "https://predictatrade.com/",
+        "description": "XAUUSD market intelligence and explainable trading analysis.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://predictatrade.com/?s={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mehulkumar Bhatt",
+        "url": "https://predictatrade.com/",
+        "jobTitle": "Developer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Simha Online"
+        }
+      }
     </script>
     <script type="module" crossorigin src="/assets/index-c4adef1e.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-BJBN36Jh.css">
@@ -63,5 +108,15 @@
       </noscript>
     </div>
     <script defer src="/cookie-consent.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(function (error) {
+              console.warn('Predict-A-Trade offline support is unavailable.', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

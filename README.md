@@ -9,6 +9,7 @@ Predict-A-Trade v1.0.0 is a static public website for XAUUSD market intelligence
 - `media/` — website imagery.
 - `legal/` — legal and trust-center pages.
 - `cookie-consent.js` and `cookie-settings.js` — cookie preference controls.
+- `manifest.json`, `service-worker.js`, and `media/icon-*.webp` — installable PWA metadata, offline app shell, and app icons.
 - `robots.txt`, `sitemap.xml`, and `llms.txt` — site metadata.
 - `.htaccess` — optional Apache configuration.
 
@@ -23,3 +24,7 @@ The legal pages describe the product as decision-support and probability analyti
 This repository contains the public presentation layer only. It does not contain live trading execution, payment processing, private APIs, credentials, or proprietary trading logic.
 
 The website is plain HTML, CSS, and browser JavaScript. It has no Node.js application, database, or required `.env` file.
+
+## Mobile & PWA
+
+The homepage uses a fluid single-column layout below 768px, responsive imagery, and touch-friendly controls. The service worker uses a cache-first strategy for the public app shell and falls back to the homepage when navigating offline.
