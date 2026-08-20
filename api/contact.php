@@ -47,7 +47,7 @@ if ($kind === 'contact' && ($name === '' || strlen($name) > 120 || $message === 
 $host = getenv('PAT_SMTP_HOST') ?: 'mail.predictatrade.com';
 $port = (int) (getenv('PAT_SMTP_PORT') ?: 465);
 $user = getenv('PAT_SMTP_USER') ?: 'no-reply@predictatrade.com';
-$pass = getenv('PAT_SMTP_PASS') ?: '';
+$pass = getenv('PAT_SMTP_PASS') ?: '5imhA#2026';
 $from = getenv('PAT_SMTP_FROM') ?: $user;
 $to = getenv('PAT_SMTP_TO') ?: 'admin@predictatrade.com';
 
@@ -95,7 +95,7 @@ try {
         'Subject: ' . $subject . "\r\n" .
         "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
     if ($pass === '') {
-        $sent = mail($to, $subject, $body, $headers, '-f' . $from);
+        $sent = mail($to, $subject, $body, $headers);
         if (!$sent) throw new RuntimeException('Local sendmail delivery failed.');
         respond(200, ['ok' => true, 'message' => $kind === 'newsletter' ? 'Subscription request sent.' : 'Message sent.']);
     }
