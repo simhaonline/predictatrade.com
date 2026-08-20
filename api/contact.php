@@ -88,13 +88,16 @@ try {
         smtp_write($socket, 'DATA', 354);
     }
 
-    $subject = $kind === 'newsletter' ? 'Predict-A-Trade newsletter subscription request' : 'Predict-A-Trade contact request';
+    $subject = $kind === 'newsletter'
+        ? '[Predict-A-Trade] Newsletter subscription request'
+        : '[Predict-A-Trade] Contact form message';
     $body = $kind === 'newsletter'
         ? "Newsletter subscription request\n\nEmail: {$email}\nConsent: confirmed\n"
         : "Contact request\n\nName: {$name}\nEmail: {$email}\nConsent: confirmed\n\nMessage:\n{$message}\n";
     $headers = 'From: Predict-A-Trade website <' . $from . ">\r\n" .
         'Reply-To: ' . $email . "\r\n" .
         'To: ' . $to . "\r\n" .
+        'X-Predict-A-Trade-Type: ' . $kind . "\r\n" .
         'Subject: ' . $subject . "\r\n" .
         "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
     $autoReplySubject = $kind === 'newsletter'
