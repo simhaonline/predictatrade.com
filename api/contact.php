@@ -68,23 +68,25 @@ function smtp_write($socket, string $command, int $expected): void {
 }
 
 try {
-    $transport = $port === 465 ? 'ssl://' . $host : $host;
-    $socket = fsockopen($transport, $port, $errno, $error, 15);
-    if (!$socket) throw new RuntimeException('SMTP connection failed.');
-    stream_set_timeout($socket, 15);
-    smtp_read($socket, 220);
-    smtp_write($socket, 'EHLO predictatrade.com', 250);
-    if ($port === 587) {
-        smtp_write($socket, 'STARTTLS', 220);
-        if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) throw new RuntimeException('TLS negotiation failed.');
+    if ($useSmtp) {
+        $transport = $port === 465 ? 'ssl://' . $host : $host;
+        $socket = fsockopen($transport, $port, $errno, $error, 15);
+        if (!$socket) throw new RuntimeException('SMTP connection failed.');
+        stream_set_timeout($socket, 15);
+        smtp_read($socket, 220);
         smtp_write($socket, 'EHLO predictatrade.com', 250);
+        if ($port === 587) {
+            smtp_write($socket, 'STARTTLS', 220);
+            if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) throw new RuntimeException('TLS negotiation failed.');
+            smtp_write($socket, 'EHLO predictatrade.com', 250);
+        }
+        smtp_write($socket, 'AUTH LOGIN', 334);
+        smtp_write($socket, base64_encode($user), 334);
+        smtp_write($socket, base64_encode($pass), 235);
+        smtp_write($socket, 'MAIL FROM:<' . $from . '>', 250);
+        smtp_write($socket, 'RCPT TO:<' . $to . '>', 250);
+        smtp_write($socket, 'DATA', 354);
     }
-    smtp_write($socket, 'AUTH LOGIN', 334);
-    smtp_write($socket, base64_encode($user), 334);
-    smtp_write($socket, base64_encode($pass), 235);
-    smtp_write($socket, 'MAIL FROM:<' . $from . '>', 250);
-    smtp_write($socket, 'RCPT TO:<' . $to . '>', 250);
-    smtp_write($socket, 'DATA', 354);
 
     $subject = $kind === 'newsletter' ? 'Predict-A-Trade newsletter subscription request' : 'Predict-A-Trade contact request';
     $body = $kind === 'newsletter'
