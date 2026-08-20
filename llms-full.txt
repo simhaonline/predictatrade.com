@@ -29,7 +29,7 @@ Multi-timeframe analysis combines broader context with more local price behavior
 An analyst can compare higher-timeframe bias, intermediate structure, lower-timeframe confirmation, nearby liquidity, session timing, volatility, and invalidation levels. Common mistakes include forcing lower-timeframe signals against clear higher-timeframe context, entering without an invalidation plan, treating alignment as certainty, and ignoring spread, slippage, news, or data quality.
 
 ## About the Team
-- Operated by Simha Online Services LLC-FZ, Dubai, UAE
+- Operated by Simha Fintech LLC, Dubai, UAE
 - Built by Mehulkumar Bhatt
 - Contact: https://predictatrade.com/#contact
 
