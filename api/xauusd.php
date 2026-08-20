@@ -50,11 +50,11 @@ if ($httpStatus < 200 || $httpStatus >= 300 || !$row || $price <= 0) {
     quote_response(502, ['ok' => false, 'message' => 'Live market reference is temporarily unavailable.']);
 }
 
-$historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=XAUUSD&limit=26&apikey=' . rawurlencode($apiKey);
+$historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=GCUSD&apikey=' . rawurlencode($apiKey);
 [$historyPayload, $historyStatus] = fmp_get($historyUrl);
 $historyDecoded = is_string($historyPayload) ? json_decode($historyPayload, true) : null;
 if (!is_array($historyDecoded) || !$historyDecoded || !isset($historyDecoded[0]['close'])) {
-    $historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=GCUSD&limit=26&apikey=' . rawurlencode($apiKey);
+    $historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=XAUUSD&apikey=' . rawurlencode($apiKey);
     [$historyPayload, $historyStatus] = fmp_get($historyUrl);
     $historyDecoded = is_string($historyPayload) ? json_decode($historyPayload, true) : null;
 }

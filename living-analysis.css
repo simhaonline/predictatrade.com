@@ -54,6 +54,9 @@
 .la-live-line { stroke: var(--la-amber); stroke-dasharray: 2 7; stroke-width: 1; opacity: .5; }
 .la-live-box { fill: #171b21; stroke: var(--la-amber); stroke-width: 1; }
 .la-live-text { fill: var(--la-gold); font-size: 10px; font-weight: 800; letter-spacing: .04em; }
+.la-chips { display: none; }
+.la-indicator-strip { display: flex; gap: 7px; left: 24px; position: absolute; top: 76px; z-index: 2; }
+.la-indicator-strip span { background: #171b21; border: 1px solid #394149; border-radius: 999px; color: #c0c6c7; font: 800 9px/1 Manrope, Arial, sans-serif; letter-spacing: .04em; padding: 7px 9px; white-space: nowrap; }
 .la-market-header { align-items: flex-start; display: flex; justify-content: space-between; left: 24px; pointer-events: none; position: absolute; right: 24px; top: 20px; z-index: 2; }
 .la-market-symbol { color: #f4f1e8; display: block; font: 800 16px/1 Manrope, Arial, sans-serif; letter-spacing: .08em; }
 .la-market-timeframe { color: var(--la-quiet); display: block; font: 700 9px/1.2 Manrope, Arial, sans-serif; letter-spacing: .12em; margin-top: 7px; }
@@ -105,6 +108,11 @@
   .la-market-symbol { font-size: 13px; }
   .la-market-timeframe, .la-market-change { font-size: 8px; }
   .la-market-price { font-size: 22px; }
+  .la-indicator-strip { gap: 4px; left: 16px; top: 67px; }
+  .la-indicator-strip span { font-size: 8px; padding: 6px 7px; }
+  .la-annotation { display: none; }
+  .la-live-box, .la-live-text { display: none; }
+  .living-analysis-note { display: none; }
   .living-analysis-caption { bottom: 14px; left: 16px; font-size: 9px; }
   .living-analysis-note { bottom: 14px; right: 16px; font-size: 9px; }
 }

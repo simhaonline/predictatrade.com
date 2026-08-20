@@ -59,7 +59,7 @@
       </defs>
       <rect width="800" height="450" fill="#0b0d12"/>
       <g class="la-grid"><path d="M 54 82H746 M54 152H746 M54 222H746 M54 292H746 M54 362H746"/><path d="M 62 64V370 M224 64V370 M386 64V370 M548 64V370 M710 64V370"/></g>
-      <g class="la-axis"><text x="62" y="45">XAUUSD / ILLUSTRATIVE VIEW</text><text x="62" y="397">OBSERVE</text><text x="337" y="397">CONTEXTUALISE</text><text x="661" y="397">ACT</text></g>
+      <g class="la-axis"><text x="62" y="397">OBSERVE</text><text x="337" y="397">CONTEXTUALISE</text><text x="661" y="397">ACT</text></g>
       <g class="la-competitors"><path class="la-competitor" d="${pathFor(competitorA, x0, step, y)}"/><path class="la-competitor" d="${pathFor(competitorB, x0, step, y)}"/></g>
       <g class="la-candles">${candleSvg}</g>
       <g class="la-noise"><rect width="800" height="450"/></g>
@@ -93,6 +93,11 @@
     marketHeader.className = 'la-market-header';
     marketHeader.innerHTML = '<div><strong class="la-market-symbol">XAUUSD</strong><span class="la-market-timeframe">5 MIN · LIVE REFERENCE</span></div><div class="la-market-reading"><strong class="la-market-price">—</strong><span class="la-market-change">Waiting for market data</span></div>';
     host.append(marketHeader);
+    const indicatorStrip = document.createElement('div');
+    indicatorStrip.className = 'la-indicator-strip';
+    indicatorStrip.setAttribute('aria-label', 'Technical indicator readings');
+    indicatorStrip.innerHTML = '<span>EMA —</span><span>RSI —</span><span>MACD —</span>';
+    host.append(indicatorStrip);
     const note = document.createElement('div');
     note.className = 'living-analysis-note';
     note.textContent = 'SLOW THE INTERPRETATION';
@@ -104,7 +109,7 @@
     let liveText = host.querySelector('.la-live-text');
     const marketPrice = host.querySelector('.la-market-price');
     const marketChange = host.querySelector('.la-market-change');
-    let indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
+    let indicatorTexts = [...indicatorStrip.querySelectorAll('span')];
     const updateIndicators = (candles) => {
       candles = Array.isArray(candles) && candles.length ? candles : seededCandles(CONFIG.candleSeed);
       const closes = candles.map((item) => Number(item.close)).filter(Number.isFinite);
@@ -130,7 +135,7 @@
       liveLine = host.querySelector('.la-live-line');
       liveBox = host.querySelector('.la-live-box');
       liveText = host.querySelector('.la-live-text');
-      indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
+      indicatorTexts = [...indicatorStrip.querySelectorAll('span')];
     };
     const updateLiveReference = (quote) => {
       if (!liveReference || !quote || !Number.isFinite(quote.price)) return;
