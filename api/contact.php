@@ -47,7 +47,8 @@ if ($kind === 'contact' && ($name === '' || strlen($name) > 120 || $message === 
 $host = getenv('PAT_SMTP_HOST') ?: 'mail.predictatrade.com';
 $port = (int) (getenv('PAT_SMTP_PORT') ?: 465);
 $user = getenv('PAT_SMTP_USER') ?: 'no-reply@predictatrade.com';
-$pass = getenv('PAT_SMTP_PASS') ?: '5imhA#2026';
+$pass = getenv('PAT_SMTP_PASS') ?: '';
+$useSmtp = getenv('PAT_USE_SMTP') === '1';
 $from = getenv('PAT_SMTP_FROM') ?: $user;
 $to = getenv('PAT_SMTP_TO') ?: 'admin@predictatrade.com';
 
@@ -100,15 +101,23 @@ try {
     $autoReplyBody = $kind === 'newsletter'
         ? "Hello,\n\nThank you for requesting Predict-A-Trade updates. We have received your subscription request and will share occasional product news and educational XAUUSD market-intelligence updates.\n\nPlease remember that market analysis is informational, not financial advice, and no signal guarantees an outcome.\n\nIf you did not request these updates, you can ignore this message or contact us at {$to}.\n\nRegards,\nPredict-A-Trade Team\nSimha FinTech\nhttps://predictatrade.com/\n"
         : "Hello {$name},\n\nThank you for contacting Predict-A-Trade. We have received your message and our team will review it before replying from {$to}.\n\nPlease do not send passwords, payment credentials, API keys, or other sensitive information by email. Predict-A-Trade provides informational market intelligence and not personalised financial advice.\n\nRegards,\nPredict-A-Trade Team\nSimha FinTech\nhttps://predictatrade.com/\n";
+    $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+    $autoReplyHtml = $kind === 'newsletter'
+        ? '<p>Thank you for requesting Predict-A-Trade updates. We have received your subscription request and will share occasional product news and educational XAUUSD market-intelligence updates.</p><p>Please remember that market analysis is informational, not financial advice, and no signal guarantees an outcome.</p>'
+        : '<p>Hello ' . $safeName . ',</p><p>Thank you for contacting Predict-A-Trade. We have received your message and our team will review it before replying from <a href="mailto:' . htmlspecialchars($to, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($to, ENT_QUOTES, 'UTF-8') . '</a>.</p><p>Please do not send passwords, payment credentials, API keys, or other sensitive information by email. Predict-A-Trade provides informational market intelligence and not personalised financial advice.</p>';
+    $boundary = '=_PredictATrade_' . bin2hex(random_bytes(12));
+    $autoReplyHtml = '<!doctype html><html><body style="margin:0;background:#f6f4ef;color:#171714;font-family:Arial,Helvetica,sans-serif;line-height:1.6;padding:24px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center"><table role="presentation" width="100%" style="max-width:620px;background:#fffefa;border:1px solid #dedbd2;border-radius:16px;overflow:hidden" cellspacing="0" cellpadding="0"><tr><td style="padding:28px 32px;border-bottom:4px solid #d86b3d"><img src="https://predictatrade.com/media/predict-a-trade_horizontal.png" alt="Predict-A-Trade" width="190" style="display:block;max-width:100%;height:auto"></td></tr><tr><td style="padding:30px 32px;font-size:15px">' . $autoReplyHtml . '<p style="margin:26px 0 0;color:#68665e">Regards,<br><strong>Predict-A-Trade Team</strong><br>Simha FinTech</p></td></tr><tr><td style="padding:18px 32px;background:#171714;color:#c8c5bb;font-size:12px">Predict-A-Trade · <a href="https://predictatrade.com/" style="color:#f0a07c">predictatrade.com</a><br>Informational market intelligence. Not financial advice.</td></tr></table></td></tr></table></body></html>';
     $autoReplyHeaders = 'From: Predict-A-Trade <' . $from . ">\r\n" .
         'Reply-To: ' . $to . "\r\n" .
         'Auto-Submitted: auto-replied' . "\r\n" .
         'X-Auto-Response-Suppress: All' . "\r\n" .
-        'Content-Type: text/plain; charset=UTF-8' . "\r\n";
-    if ($pass === '') {
+        'MIME-Version: 1.0' . "\r\n" .
+        'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . "\r\n";
+    $autoReplyPayload = '--' . $boundary . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $autoReplyBody . "\r\n--" . $boundary . "\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n" . $autoReplyHtml . "\r\n--" . $boundary . "--\r\n";
+    if (!$useSmtp) {
         $sent = mail($to, $subject, $body, $headers);
         if (!$sent) throw new RuntimeException('Local sendmail delivery failed.');
-        if (!mail($email, $autoReplySubject, $autoReplyBody, $autoReplyHeaders)) {
+        if (!mail($email, $autoReplySubject, $autoReplyPayload, $autoReplyHeaders)) {
             error_log('Predict-A-Trade auto-reply delivery failed for ' . $email);
         }
         respond(200, ['ok' => true, 'message' => $kind === 'newsletter' ? 'Subscription request sent.' : 'Message sent.']);
