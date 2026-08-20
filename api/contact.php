@@ -50,9 +50,6 @@ $user = getenv('PAT_SMTP_USER') ?: 'no-reply@predictatrade.com';
 $pass = getenv('PAT_SMTP_PASS') ?: '';
 $from = getenv('PAT_SMTP_FROM') ?: $user;
 $to = getenv('PAT_SMTP_TO') ?: 'admin@predictatrade.com';
-if ($pass === '') {
-    respond(503, ['ok' => false, 'message' => 'Email service is not configured yet.']);
-}
 
 function smtp_read($socket, int $expected): void {
     $response = '';
@@ -97,6 +94,11 @@ try {
         'To: ' . $to . "\r\n" .
         'Subject: ' . $subject . "\r\n" .
         "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
+    if ($pass === '') {
+        $sent = mail($to, $subject, $body, $headers, '-f' . $from);
+        if (!$sent) throw new RuntimeException('Local sendmail delivery failed.');
+        respond(200, ['ok' => true, 'message' => $kind === 'newsletter' ? 'Subscription request sent.' : 'Message sent.']);
+    }
     $payload = str_replace(["\r", "\n"], ["\r\n", "\r\n"], $headers . $body);
     $payload = preg_replace('/^\./m', '..', $payload) . "\r\n.";
     fwrite($socket, $payload . "\r\n");
