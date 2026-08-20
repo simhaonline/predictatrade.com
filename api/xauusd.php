@@ -42,6 +42,8 @@ if (function_exists('curl_init')) {
 $decoded = is_string($payload) ? json_decode($payload, true) : null;
 $row = is_array($decoded) && isset($decoded[0]) && is_array($decoded[0]) ? $decoded[0] : null;
 $price = is_array($row) ? (float) ($row['price'] ?? 0) : 0;
+$rawChangePercent = is_array($row) ? ($row['changesPercentage'] ?? $row['changePercentage'] ?? $row['percentageChange'] ?? null) : null;
+$changePercent = is_numeric($rawChangePercent) ? (float) $rawChangePercent : (float) str_replace('%', '', (string) $rawChangePercent);
 if ($httpStatus < 200 || $httpStatus >= 300 || !$row || $price <= 0) {
     error_log('Predict-A-Trade FMP quote request failed with status ' . $httpStatus . '.');
     quote_response(502, ['ok' => false, 'message' => 'Live market reference is temporarily unavailable.']);
@@ -54,7 +56,7 @@ $response = [
     'dayHigh' => (float) ($row['dayHigh'] ?? 0),
     'dayLow' => (float) ($row['dayLow'] ?? 0),
     'change' => (float) ($row['change'] ?? 0),
-    'changePercent' => (float) ($row['changesPercentage'] ?? 0),
+    'changePercent' => $changePercent,
     'timestamp' => (int) ($row['timestamp'] ?? time()),
 ];
 @file_put_contents($cacheFile, json_encode($response, JSON_UNESCAPED_SLASHES), LOCK_EX);
