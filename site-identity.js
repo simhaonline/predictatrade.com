@@ -15,6 +15,11 @@
       link.textContent = 'Capabilities';
       footerNav.appendChild(link);
     }
+    const capabilities = document.querySelector('#public-capabilities');
+    const siteFooter = document.querySelector('.site-footer');
+    if (capabilities && siteFooter && siteFooter.parentNode !== capabilities.parentNode) {
+      siteFooter.parentNode.insertBefore(capabilities, siteFooter);
+    }
   };
   new MutationObserver(update).observe(document.documentElement, {childList: true, subtree: true});
   update();
