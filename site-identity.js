@@ -5,7 +5,7 @@
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node => {
-      node.nodeValue = node.nodeValue.replaceAll('hello@predict-a-trade.com', 'predictatrade@gmail.com').replaceAll('Simha Online', 'Simha Online Services LLC-FZ');
+      node.nodeValue = node.nodeValue.replaceAll('hello@predict-a-trade.com', 'predictatrade@gmail.com');
     });
     document.querySelectorAll('.module-strip').forEach(node => node.remove());
   };
