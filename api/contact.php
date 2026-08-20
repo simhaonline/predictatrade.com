@@ -94,9 +94,23 @@ try {
         'To: ' . $to . "\r\n" .
         'Subject: ' . $subject . "\r\n" .
         "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
+    $autoReplySubject = $kind === 'newsletter'
+        ? 'Welcome to Predict-A-Trade updates'
+        : 'We received your message — Predict-A-Trade';
+    $autoReplyBody = $kind === 'newsletter'
+        ? "Hello,\n\nThank you for requesting Predict-A-Trade updates. We have received your subscription request and will share occasional product news and educational XAUUSD market-intelligence updates.\n\nPlease remember that market analysis is informational, not financial advice, and no signal guarantees an outcome.\n\nIf you did not request these updates, you can ignore this message or contact us at {$to}.\n\nRegards,\nPredict-A-Trade Team\nSimha FinTech\nhttps://predictatrade.com/\n"
+        : "Hello {$name},\n\nThank you for contacting Predict-A-Trade. We have received your message and our team will review it before replying from {$to}.\n\nPlease do not send passwords, payment credentials, API keys, or other sensitive information by email. Predict-A-Trade provides informational market intelligence and not personalised financial advice.\n\nRegards,\nPredict-A-Trade Team\nSimha FinTech\nhttps://predictatrade.com/\n";
+    $autoReplyHeaders = 'From: Predict-A-Trade <' . $from . ">\r\n" .
+        'Reply-To: ' . $to . "\r\n" .
+        'Auto-Submitted: auto-replied' . "\r\n" .
+        'X-Auto-Response-Suppress: All' . "\r\n" .
+        'Content-Type: text/plain; charset=UTF-8' . "\r\n";
     if ($pass === '') {
         $sent = mail($to, $subject, $body, $headers);
         if (!$sent) throw new RuntimeException('Local sendmail delivery failed.');
+        if (!mail($email, $autoReplySubject, $autoReplyBody, $autoReplyHeaders)) {
+            error_log('Predict-A-Trade auto-reply delivery failed for ' . $email);
+        }
         respond(200, ['ok' => true, 'message' => $kind === 'newsletter' ? 'Subscription request sent.' : 'Message sent.']);
     }
     $payload = str_replace(["\r", "\n"], ["\r\n", "\r\n"], $headers . $body);
