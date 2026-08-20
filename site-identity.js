@@ -30,10 +30,7 @@
       lockup.src = '/media/predict-a-trade_primary-vertical.png';
       lockup.alt = 'Predict-A-Trade';
       lockup.className = 'footer-brand-lockup';
-      const publisher = document.createElement('span');
-      publisher.className = 'footer-brand-publisher';
-      publisher.textContent = 'by Simha FinTech';
-      footerBrand.append(lockup, publisher);
+      footerBrand.append(lockup);
     }
   };
   new MutationObserver(update).observe(document.documentElement, {childList: true, subtree: true});
