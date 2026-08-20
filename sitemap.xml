@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://predictatrade.com/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://predictatrade.com/features/</loc></url>
   <url><loc>https://predictatrade.com/legal/</loc></url>
   <url><loc>https://predictatrade.com/legal/probability-signal-warning/</loc></url>
   <url><loc>https://predictatrade.com/legal/no-guarantee/</loc></url>
