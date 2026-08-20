@@ -107,10 +107,17 @@
       frame = requestAnimationFrame(tick);
     };
     const setVisibility = (entries) => { visible = entries[0].isIntersecting; if (visible && !frame) frame = requestAnimationFrame(tick); };
-    const observer = new IntersectionObserver(setVisibility, { threshold: .15 });
-    observer.observe(host);
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(setVisibility, { threshold: .15 });
+      observer.observe(host);
+    } else {
+      visible = true;
+      frame = requestAnimationFrame(tick);
+    }
     document.addEventListener('visibilitychange', () => { hidden = document.visibilityState === 'hidden'; if (!hidden && visible && !frame) frame = requestAnimationFrame(tick); });
-    reduced.addEventListener?.('change', (event) => { if (event.matches) { host.classList.remove(...phases.map(item => item[0])); host.classList.add('is-static'); caption.textContent = 'SEE THE SIGNAL'; } });
+    const onReducedChange = (event) => { if (event.matches) { host.classList.remove(...phases.map(item => item[0])); host.classList.add('is-static'); caption.textContent = 'SEE THE SIGNAL'; } };
+    if (reduced.addEventListener) reduced.addEventListener('change', onReducedChange);
+    else reduced.addListener?.(onReducedChange);
   }
 
   const findHosts = () => document.querySelectorAll('[data-living-analysis], .hero-visual');
