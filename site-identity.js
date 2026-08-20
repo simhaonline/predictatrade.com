@@ -33,11 +33,32 @@
       newsletterForm.addEventListener('submit', event => {
         event.preventDefault();
         const email = document.querySelector('#newsletter-email').value.trim();
-        const subject = encodeURIComponent('Predict-A-Trade newsletter subscription');
-        const body = encodeURIComponent('Please add ' + email + ' to the Predict-A-Trade newsletter.');
-        document.querySelector('#newsletter-status').textContent = 'Opening your email app to confirm the request…';
-        window.location.href = 'mailto:predictatrade@gmail.com?subject=' + subject + '&body=' + body;
+        const status = document.querySelector('#newsletter-status');
+        status.textContent = 'Sending your request…';
+        fetch('/api/contact.php', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({kind: 'newsletter', email, consent: true})})
+          .then(response => response.json().then(result => ({ok: response.ok && result.ok, message: result.message})))
+          .then(result => { status.textContent = result.ok ? result.message : result.message || 'Unable to send your request.'; if (result.ok) newsletterForm.reset(); })
+          .catch(() => { status.textContent = 'Unable to send your request. Please email predictatrade@gmail.com.'; });
       });
+    }
+    const contactPanel = document.querySelector('.contact-panel');
+    if (contactPanel && !contactPanel.querySelector('.contact-form')) {
+      const oldButton = contactPanel.querySelector('a[href^="mailto:"]');
+      if (oldButton) oldButton.remove();
+      const form = document.createElement('form');
+      form.className = 'contact-form';
+      form.innerHTML = '<input name="name" type="text" placeholder="Your name" autocomplete="name" required><input name="email" type="email" placeholder="Your email" autocomplete="email" required><textarea name="message" placeholder="How can we help?" rows="4" required></textarea><label><input name="consent" type="checkbox" required> I agree to be contacted about this message.</label><input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" class="contact-honeypot"><button type="submit">Send message</button><p class="contact-status" role="status" aria-live="polite"></p>';
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const status = form.querySelector('.contact-status');
+        status.textContent = 'Sending your message…';
+        fetch('/api/contact.php', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({kind: 'contact', name: formData.get('name'), email: formData.get('email'), message: formData.get('message'), consent: formData.get('consent') === 'on', website: formData.get('website')})})
+          .then(response => response.json().then(result => ({ok: response.ok && result.ok, message: result.message})))
+          .then(result => { status.textContent = result.ok ? result.message : result.message || 'Unable to send your message.'; if (result.ok) form.reset(); })
+          .catch(() => { status.textContent = 'Unable to send your message. Please email predictatrade@gmail.com.'; });
+      });
+      contactPanel.appendChild(form);
     }
     const footerBrand = document.querySelector('.footer-brand');
     if (footerBrand && !footerBrand.dataset.rebranded) {
