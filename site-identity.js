@@ -32,6 +32,16 @@
       lockup.className = 'footer-brand-lockup';
       footerBrand.append(lockup);
     }
+    const scrollTop = document.querySelector('#scroll-top');
+    if (scrollTop && !scrollTop.dataset.bound) {
+      scrollTop.dataset.bound = 'true';
+      const toggleScrollTop = () => scrollTop.classList.toggle('is-visible', window.scrollY > 420);
+      window.addEventListener('scroll', toggleScrollTop, {passive: true});
+      scrollTop.addEventListener('click', () => {
+        window.scrollTo({top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+      });
+      toggleScrollTop();
+    }
   };
   new MutationObserver(update).observe(document.documentElement, {childList: true, subtree: true});
   update();
