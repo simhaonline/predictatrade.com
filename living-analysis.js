@@ -29,11 +29,15 @@
     return values.map((value, index) => `${index ? 'L' : 'M'} ${x0 + index * step} ${y(value)}`).join(' ');
   }
 
-  function buildGraphic() {
-    const candles = seededCandles(CONFIG.candleSeed);
+  function buildGraphic(candles = seededCandles(CONFIG.candleSeed)) {
     const x0 = 62;
     const step = 27;
-    const y = (value) => 365 - value * 2.9;
+    const minimum = Math.min(...candles.map((candle) => candle.low));
+    const maximum = Math.max(...candles.map((candle) => candle.high));
+    const padding = Math.max((maximum - minimum) * .12, .01);
+    const chartLow = minimum - padding;
+    const chartHigh = maximum + padding;
+    const y = (value) => 350 - ((value - chartLow) / Math.max(.0001, chartHigh - chartLow)) * 250;
     let ema = candles[0].close;
     const signal = candles.map((candle) => { ema += (candle.close - ema) / CONFIG.signalPeriod; return ema; });
     const competitorA = candles.map((candle, i) => candle.close + Math.sin(i * 1.2) * 4);
@@ -94,13 +98,13 @@
     note.textContent = 'SLOW THE INTERPRETATION';
     host.append(note);
     host.classList.add('is-mounted');
-    const liveReference = host.querySelector('.la-live-reference');
-    const liveLine = host.querySelector('.la-live-line');
-    const liveBox = host.querySelector('.la-live-box');
-    const liveText = host.querySelector('.la-live-text');
+    let liveReference = host.querySelector('.la-live-reference');
+    let liveLine = host.querySelector('.la-live-line');
+    let liveBox = host.querySelector('.la-live-box');
+    let liveText = host.querySelector('.la-live-text');
     const marketPrice = host.querySelector('.la-market-price');
     const marketChange = host.querySelector('.la-market-change');
-    const indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
+    let indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
     const updateIndicators = (candles) => {
       candles = Array.isArray(candles) && candles.length ? candles : seededCandles(CONFIG.candleSeed);
       const closes = candles.map((item) => Number(item.close)).filter(Number.isFinite);
@@ -119,8 +123,18 @@
       if (indicatorTexts[2]) indicatorTexts[2].textContent = `MACD ${macd >= 0 ? '+' : ''}${macd.toFixed(2)}`;
     };
     updateIndicators();
+    const renderLiveChart = (candles) => {
+      if (!Array.isArray(candles) || candles.length < 2) return;
+      graphic.innerHTML = buildGraphic(candles);
+      liveReference = host.querySelector('.la-live-reference');
+      liveLine = host.querySelector('.la-live-line');
+      liveBox = host.querySelector('.la-live-box');
+      liveText = host.querySelector('.la-live-text');
+      indicatorTexts = [...host.querySelectorAll('.la-chip-text')];
+    };
     const updateLiveReference = (quote) => {
       if (!liveReference || !quote || !Number.isFinite(quote.price)) return;
+      renderLiveChart(quote.candles);
       const low = Number(quote.dayLow) || quote.price - Math.max(1, Math.abs(quote.price) * .005);
       const high = Number(quote.dayHigh) || quote.price + Math.max(1, Math.abs(quote.price) * .005);
       const ratio = Math.max(0, Math.min(1, (quote.price - low) / Math.max(.0001, high - low)));

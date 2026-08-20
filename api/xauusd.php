@@ -10,6 +10,19 @@ function quote_response(int $status, array $body): never {
     exit;
 }
 
+function fmp_get(string $url): array {
+    if (function_exists('curl_init')) {
+        $curl = curl_init($url);
+        curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 12, CURLOPT_HTTPHEADER => ['Accept: application/json']]);
+        $payload = curl_exec($curl);
+        $status = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        return [$payload, $status];
+    }
+    $context = stream_context_create(['http' => ['timeout' => 12, 'header' => "Accept: application/json\r\n"]]);
+    return [@file_get_contents($url, false, $context), 200];
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') quote_response(405, ['ok' => false, 'message' => 'Method not allowed.']);
 
 $apiKey = getenv('PAT_FMP_API_KEY') ?: '';
@@ -25,19 +38,7 @@ if (is_file($cacheFile) && (time() - (int) filemtime($cacheFile)) < 30) {
 }
 
 $url = 'https://financialmodelingprep.com/stable/quote?symbol=XAUUSD&apikey=' . rawurlencode($apiKey);
-$payload = false;
-$httpStatus = 0;
-if (function_exists('curl_init')) {
-    $curl = curl_init($url);
-    curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 12, CURLOPT_HTTPHEADER => ['Accept: application/json']]);
-    $payload = curl_exec($curl);
-    $httpStatus = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    curl_close($curl);
-} else {
-    $context = stream_context_create(['http' => ['timeout' => 12, 'header' => "Accept: application/json\r\n"]]);
-    $payload = @file_get_contents($url, false, $context);
-    $httpStatus = 200;
-}
+[$payload, $httpStatus] = fmp_get($url);
 
 $decoded = is_string($payload) ? json_decode($payload, true) : null;
 $row = is_array($decoded) && isset($decoded[0]) && is_array($decoded[0]) ? $decoded[0] : null;
@@ -49,6 +50,30 @@ if ($httpStatus < 200 || $httpStatus >= 300 || !$row || $price <= 0) {
     quote_response(502, ['ok' => false, 'message' => 'Live market reference is temporarily unavailable.']);
 }
 
+$historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=XAUUSD&limit=26&apikey=' . rawurlencode($apiKey);
+[$historyPayload, $historyStatus] = fmp_get($historyUrl);
+$historyDecoded = is_string($historyPayload) ? json_decode($historyPayload, true) : null;
+if (!is_array($historyDecoded) || !$historyDecoded || !isset($historyDecoded[0]['close'])) {
+    $historyUrl = 'https://financialmodelingprep.com/stable/historical-chart/5min?symbol=GCUSD&limit=26&apikey=' . rawurlencode($apiKey);
+    [$historyPayload, $historyStatus] = fmp_get($historyUrl);
+    $historyDecoded = is_string($historyPayload) ? json_decode($historyPayload, true) : null;
+}
+$candles = [];
+if (is_array($historyDecoded)) {
+    foreach ($historyDecoded as $bar) {
+        if (!is_array($bar) || !isset($bar['open'], $bar['high'], $bar['low'], $bar['close'])) continue;
+        $candles[] = [
+            'time' => (string) ($bar['date'] ?? $bar['timestamp'] ?? ''),
+            'open' => (float) $bar['open'],
+            'high' => (float) $bar['high'],
+            'low' => (float) $bar['low'],
+            'close' => (float) $bar['close'],
+        ];
+    }
+    usort($candles, static fn (array $left, array $right): int => strcmp($left['time'], $right['time']));
+    $candles = array_slice($candles, -26);
+}
+
 $response = [
     'ok' => true,
     'symbol' => 'XAUUSD',
@@ -58,6 +83,7 @@ $response = [
     'change' => (float) ($row['change'] ?? 0),
     'changePercent' => $changePercent,
     'timestamp' => (int) ($row['timestamp'] ?? time()),
+    'candles' => $candles,
 ];
 @file_put_contents($cacheFile, json_encode($response, JSON_UNESCAPED_SLASHES), LOCK_EX);
 quote_response(200, $response);
