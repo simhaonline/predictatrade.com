@@ -8,6 +8,7 @@
   --la-amber: #f0b04a;
   --la-gold: #ffd38a;
   background: var(--la-bg);
+  border: 1px solid #2d333c;
   border-radius: 18px;
   color: var(--la-text);
   min-height: 0;
@@ -15,6 +16,23 @@
   position: relative;
   width: 100%;
 }
+.living-analysis-graphic svg > rect:first-child { fill: var(--la-bg); }
+.dark .living-analysis {
+  --la-bg: #121720;
+  --la-grid: #303844;
+  --la-text: #eef1f2;
+  --la-quiet: #aab2bb;
+  --la-green: #47d6a4;
+  --la-red: #ff7c83;
+  --la-amber: #f4b85e;
+  --la-gold: #ffe0a1;
+  border-color: #46505d;
+  box-shadow: 0 16px 38px #0008, 0 0 0 1px #ffffff08 inset;
+}
+.dark .living-analysis .la-indicator-strip span { background: #202833; border-color: #4b5866; color: #e1e6e8; }
+.dark .living-analysis .la-market-symbol { color: #ffffff; }
+.dark .living-analysis .la-market-timeframe { color: #aab6c0; }
+.dark .living-analysis .la-market-change { color: #c0c9d0; }
 .hero-visual.living-analysis { aspect-ratio: 16 / 9; height: auto; min-height: 0; }
 .hero-visual.living-analysis > .living-analysis-poster { height: 100%; }
 
