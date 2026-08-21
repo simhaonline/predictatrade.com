@@ -3,7 +3,7 @@ const APP_SHELL = [
   '/', '/index.html', '/manifest.json',
   '/assets/index-c4adef1e.js', '/assets/index-BJBN36Jh.css',
   '/cookie-consent.css', '/cookie-consent.js',
-  '/media/pat-hero-signal.webp', '/media/pat-market-texture.webp',
+  '/media/predict-a-trade-static-hero.png', '/media/pat-market-texture.webp',
   '/media/predict-a-trade_horizontal.webp', '/media/predict-a-trade_icon-only.webp',
   '/media/icon-192.webp', '/media/icon-512.webp'
 ];
