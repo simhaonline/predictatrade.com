@@ -31,4 +31,4 @@ The homepage uses a fluid single-column layout below 768px, responsive imagery, 
 
 ## Static hero visual
 
-The homepage uses `media/predict-a-trade-static-hero.png`, a calm editorial visual built around a gold-market signal, muted directional context, and a dark analytical field. It is a static marketing image with no live-price behavior, no ticker, and no client-side market-data request.
+The homepage uses `media/predict-a-trade-static-hero.webp`, a calm editorial visual built around a gold-market signal, muted directional context, and a dark analytical field. It is a static marketing image with no live-price behavior, no ticker, and no client-side market-data request.

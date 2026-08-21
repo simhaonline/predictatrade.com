@@ -9,7 +9,7 @@
     });
     document.querySelectorAll('[href="https://simhaonline.com"]').forEach(link => { link.href = 'https://predictatrade.com/'; });
     document.querySelectorAll('.hero-visual img').forEach(image => {
-      image.src = '/media/predict-a-trade-static-hero.png';
+      image.src = '/media/predict-a-trade-static-hero.webp';
       image.alt = 'Abstract gold-market signal and analytical context';
     });
     document.querySelectorAll('.module-strip').forEach(node => node.remove());
