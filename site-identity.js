@@ -20,6 +20,13 @@
       link.textContent = 'Capabilities';
       footerNav.appendChild(link);
     }
+    if (footerNav && !footerNav.parentNode.querySelector('.footer-socials')) {
+      const socials = document.createElement('nav');
+      socials.className = 'footer-socials';
+      socials.setAttribute('aria-label', 'Social media');
+      socials.innerHTML = '<a href="https://www.instagram.com/predictatrade" target="_blank" rel="noopener noreferrer" aria-label="Predict-A-Trade on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></a><a href="https://www.facebook.com/predictatrade" target="_blank" rel="noopener noreferrer" aria-label="Predict-A-Trade on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 21v-8h2.7l.4-3H14V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.3-.1-2.4-.1-2.5 0-4.2 1.5-4.2 4.3V10H8v3h2.9v8H14Z"></path></svg></a><a href="https://www.google.com/search?q=%40predictatrade" target="_blank" rel="noopener noreferrer" aria-label="Predict-A-Trade on Google"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.8 3-4.4 3-7.2Z"></path><path d="M12 22c2.7 0 5-.9 6.6-2.5l-3.2-2.5c-.9.6-2 .9-3.4.9-2.6 0-4.8-1.8-5.6-4.2H3.1v2.6A10 10 0 0 0 12 22Z"></path><path d="M6.4 13.7a6 6 0 0 1 0-3.4V7.7H3.1a10 10 0 0 0 0 8.6l3.3-2.6Z"></path><path d="M12 6.1c1.5 0 2.8.5 3.8 1.5l2.8-2.8C17 3.2 14.7 2 12 2a10 10 0 0 0-8.9 5.7l3.3 2.6C7.2 7.9 9.4 6.1 12 6.1Z"></path></svg></a><a href="https://x.com/predictatrade" target="_blank" rel="noopener noreferrer" aria-label="Predict-A-Trade on X / Twitter"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.4L2.8 2h6.4l4.4 5.8L18.9 2Zm-1.1 17.5h1.7L8.3 4.4H6.5l11.3 15.1Z"></path></svg></a>';
+      footerNav.parentNode.insertBefore(socials, footerNav.nextSibling);
+    }
     const capabilities = document.querySelector('#public-capabilities');
     const siteFooter = document.querySelector('.site-footer');
     if (capabilities && siteFooter && siteFooter.parentNode !== capabilities.parentNode) {
