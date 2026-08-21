@@ -28,6 +28,8 @@
       footerNav.appendChild(socials);
     }
     const menuLinks = document.querySelector('.menu-panel-links');
+    const menuPanel = document.querySelector('.menu-panel');
+    if (menuPanel) menuPanel.classList.add('editorial-menu');
     if (menuLinks && !menuLinks.dataset.editorialMenu) {
       menuLinks.dataset.editorialMenu = 'true';
       const dashboard = menuLinks.querySelector('a[href^="https://live.predictatrade.com"]');
