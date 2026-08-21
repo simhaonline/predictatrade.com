@@ -35,6 +35,7 @@
       const dashboard = menuLinks.querySelector('a[href^="https://live.predictatrade.com"]');
       const login = menuLinks.querySelector('a[href^="https://platform.predictatrade.com"]');
       if (dashboard) {
+        dashboard.classList.add('menu-dashboard');
         const label = document.createElement('div');
         label.className = 'menu-product-label';
         label.textContent = 'Product';
