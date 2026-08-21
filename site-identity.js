@@ -47,7 +47,10 @@
         create.textContent = 'Create account';
         create.classList.remove('menu-sign-in');
         create.classList.add('menu-create-account');
-        login.after(create);
+        const accountActions = document.createElement('div');
+        accountActions.className = 'menu-account-actions';
+        login.parentNode.insertBefore(accountActions, login);
+        accountActions.append(login, create);
       }
     }
     const capabilities = document.querySelector('#public-capabilities');
