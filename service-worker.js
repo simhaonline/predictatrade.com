@@ -1,4 +1,4 @@
-const CACHE_NAME = 'predict-a-trade-v9';
+const CACHE_NAME = 'predict-a-trade-v10';
 const APP_SHELL = [
   '/', '/index.html', '/manifest.json',
   '/assets/index-c4adef1e.js', '/assets/index-BJBN36Jh.css',
