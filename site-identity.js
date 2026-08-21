@@ -125,6 +125,6 @@
       toggleScrollTop();
     }
   };
-  new MutationObserver(update).observe(document.documentElement, {childList: true, subtree: true});
+  new MutationObserver(update).observe(document.documentElement, {attributes: true, attributeFilter: ['class'], childList: true, subtree: true});
   update();
 })();
