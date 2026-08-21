@@ -29,7 +29,16 @@
     }
     const menuLinks = document.querySelector('.menu-panel-links');
     const menuPanel = document.querySelector('.menu-panel');
-    if (menuPanel) menuPanel.classList.add('editorial-menu');
+    if (menuPanel) {
+      menuPanel.classList.add('editorial-menu');
+      if (!menuPanel.dataset.editorialGuard) {
+        menuPanel.dataset.editorialGuard = 'true';
+        const keepEditorialMenu = new MutationObserver(() => {
+          if (!menuPanel.classList.contains('editorial-menu')) menuPanel.classList.add('editorial-menu');
+        });
+        keepEditorialMenu.observe(menuPanel, {attributes: true, attributeFilter: ['class']});
+      }
+    }
     if (menuLinks && !menuLinks.dataset.editorialMenu) {
       menuLinks.dataset.editorialMenu = 'true';
       const dashboard = menuLinks.querySelector('a[href^="https://live.predictatrade.com"]');
