@@ -40,6 +40,12 @@
         label.textContent = 'Product';
         menuLinks.insertBefore(label, dashboard);
       }
+      [...menuLinks.querySelectorAll(':scope > a')].slice(0, 4).forEach((item, index) => {
+        const number = document.createElement('span');
+        number.className = 'menu-index';
+        number.textContent = String(index + 1).padStart(2, '0');
+        item.insertBefore(number, item.firstChild);
+      });
       if (login) {
         login.textContent = 'Sign in';
         login.classList.add('menu-sign-in');
